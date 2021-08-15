@@ -1,6 +1,6 @@
 const express = require('express');
-const { getLocationDetails } = require('../api/geocoding');
-const { getTweets } = require('../api/twitter');
+const { getLocationDetails } = require('../dal/geocoding');
+const { getTweets } = require('../dal/twitter');
 
 const app = express();
 app.use(express.json());
