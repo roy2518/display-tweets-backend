@@ -4,11 +4,16 @@ const querystring = require('querystring');
 
 const MAPQUEST_ENDPOINT = 'http://open.mapquestapi.com/nominatim/v1/search.php';
 
-// Perform geocoding
-// `locations` is an array of strings, corresponding to the names of different places.
+// Accepts an array of location names and returns a map
+// of location name to geographic details about the location.
 const getLocationDetails = async (locations) => {
-    const requests = [];
-    locations.forEach((location) => {
+
+    let uniqueLocations = new Set();
+    locations.forEach(location => uniqueLocations.add(location));
+    uniqueLocations = Array.from(uniqueLocations);
+
+    // MapQuest only supports one location per request.
+    const requests = uniqueLocations.map(location => {
         const queryParams = {
             key: process.env.MAPQUEST_API_KEY,
             format: 'json',
@@ -17,16 +22,23 @@ const getLocationDetails = async (locations) => {
             addressdetails: 1,
         };
         const params = `?${querystring.stringify(queryParams)}`;
-        const urlWithParams = `${URL}${params}`;
-        requests.push(fetch(urlWithParams));
+        const urlWithParams = `${MAPQUEST_ENDPOINT}${params}`;
+        return fetch(urlWithParams);
     });
+
+    let responses = await Promise.all(requests);
+    let jsonData = await Promise.all(responses.map(response => response.json()));
+    
     const result = {};
-    let locationDetails = await Promise.all(requests);
-    locationDetails = locationDetails.map((res) => res.json());
-    locationDetails = await Promise.all(locationDetails);
-    for (let i = 0; i < locations.length; i += 1) {
-        result[locations[i]] = locationDetails[i];
-    }
+    uniqueLocations.forEach((location, index) => {
+        const locationDetail = jsonData[index][0];
+        result[location] = {
+            address: locationDetail?.address,
+            display_name: locationDetail?.display_name,
+            lat: locationDetail?.lat,
+            lon: locationDetail?.lon,
+        };
+    });
     return result;
 };
 
