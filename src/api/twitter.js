@@ -10,7 +10,7 @@ const getTweets = async (hashtag) => {
         // hashtag to search for
         query: `#${hashtag}`,
         // number of tweets to fetch
-        max_results: 40,
+        max_results: 20,
         // tweet fields we want to receive
         'tweet.fields': 'created_at,text',
         // get user info
