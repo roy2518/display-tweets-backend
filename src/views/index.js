@@ -52,9 +52,11 @@ app.get('/api/twitter', async (req, res) => {
         data: tweets.map(tweet => {
             const author = users.find(user => user.id === tweet.author_id);
             return {
-                author,
+                author: {
+                    ...author,
+                    location_details: locationDetails[author.location],
+                },
                 tweet,
-                author_location: locationDetails[author.location],
             }
         }),
     });
