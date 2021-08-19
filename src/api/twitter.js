@@ -4,8 +4,10 @@ const querystring = require('querystring');
 
 const TWITTER_ENDPOINT = 'https://api.twitter.com/2/tweets/search/recent';
 
-// Retrieve recent tweets containing a given `hashtag`
-const getTweets = async (hashtag) => {
+// Retrieve recent tweets containing a given `hashtag`.
+// `nextToken` is optional and used to fetch the next
+// page of results.
+const getTweets = async (hashtag, nextToken) => {
   const queryParams = {
     // hashtag to search for
     query: `#${hashtag} -is:retweet`,
@@ -18,6 +20,9 @@ const getTweets = async (hashtag) => {
     // user fields we want to retrieve
     'user.fields': 'name,username,profile_image_url,location',
   };
+  if (nextToken) {
+    queryParams.next_token = nextToken;
+  }
   const params = `?${querystring.stringify(queryParams)}`;
   const urlWithParams = `${TWITTER_ENDPOINT}${params}`;
   const response = await fetch(urlWithParams, { headers: { Authorization: `Bearer ${process.env.TWITTER_API_KEY}` } });

@@ -7,6 +7,8 @@ app.use(express.json());
 
 /**
  * Fetch tweets containing a given hashtag.
+ * The `nextToken` query parameter is optional
+ * and used to get the next page of results.
  *
  * Returns an HTTP 400 if the hashtag is not specified,
  * or if the Twitter API returns an error.
@@ -18,7 +20,9 @@ app.use(express.json());
  * Response:
  *
  * {
- *  data: [
+ *  data: {
+ *    tweets:
+ *    [
  *      {
  *         author: {
  *             name: Bob,
@@ -35,12 +39,14 @@ app.use(express.json());
  *         }
  *      },
  *      ...
- *  ]
+ *     ]
+ *  },
+ *  next_token: 1234567,
  * }
  *
  */
 app.get('/api/tweets', async (req, res) => {
-  const { hashtag } = req.query;
+  const { hashtag, nextToken } = req.query;
 
   if (!hashtag) {
     res.status(400);
@@ -51,7 +57,7 @@ app.get('/api/tweets', async (req, res) => {
     return;
   }
 
-  const jsonData = await getTweets(hashtag);
+  const jsonData = await getTweets(hashtag, nextToken);
 
   // Error returned from Twitter API
   if (jsonData.title && jsonData.detail) {
@@ -77,10 +83,14 @@ app.get('/api/tweets', async (req, res) => {
   const { users } = jsonData.includes;
 
   res.json({
-    data: tweets.map((tweet) => ({
-      author: users.find((user) => user.id === tweet.author_id),
-      tweet,
-    })),
+    data:
+    {
+      tweets: tweets.map((tweet) => ({
+        author: users.find((user) => user.id === tweet.author_id),
+        tweet,
+      })),
+    },
+    next_token: jsonData.meta.next_token,
   });
 });
 
