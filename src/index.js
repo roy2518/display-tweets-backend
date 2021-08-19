@@ -99,12 +99,7 @@ app.get('/api/tweets', async (req, res) => {
  *
  * Example:
  *
- * GET /api/locations
- *
- * body:
- * {
- *  "locations": ["Washington D.C."]
- * }
+ * GET /api/locations?names=["Washington D.C."]
  *
  * Response:
  * {
@@ -124,19 +119,20 @@ app.get('/api/tweets', async (req, res) => {
  * }
  */
 app.get('/api/locations', async (req, res) => {
-  const { locations } = req.body;
+  let { names } = req.query;
+  names = JSON.parse(names);
 
-  if (!locations || !Array.isArray(locations)) {
+  if (!names || !Array.isArray(names)) {
     res.status(400);
     res.json({
       title: 'Invalid Request',
-      detail: 'Please specify valid locations in the request body.',
+      detail: 'Please specify valid location names.',
     });
     return;
   }
 
   res.json({
-    data: await getLocationDetails(locations),
+    data: await getLocationDetails(names),
   });
 });
 
