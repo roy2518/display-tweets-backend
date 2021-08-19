@@ -26,14 +26,6 @@ app.use(express.json());
  *             id: 123456789,
  *             profile_image_url: "example.jpg",
  *             location: USA,
- *             location_details: {
- *                 address: {
- *                     country: "United States of America",
- *                     country_code: "us"
- *                 },
- *                 lat: 37.0902,
- *                 lon: 95.7129
- *             }
  *         },
  *         tweet: {
  *             created_at: 2021-08-15,
@@ -47,7 +39,7 @@ app.use(express.json());
  * }
  * 
  */
-app.get('/api/twitter', async (req, res) => {
+app.get('/api/tweets', async (req, res) => {
     
     const { hashtag } = req.query;
 
@@ -85,21 +77,57 @@ app.get('/api/twitter', async (req, res) => {
     const tweets = jsonData.data;
     const { users } = jsonData.includes;
 
-    const locationDetails = await getLocationDetails(
-        users.map(user => user.location).filter(location => location)
-    );
+    res.json({
+        data: tweets.map(tweet => ({
+            author: users.find(user => user.id === tweet.author_id),
+            tweet,
+        })),
+    });
+});
+
+/**
+ * Fetch details about an array of locations.
+ * 
+ * Example:
+ * 
+ * GET /api/locations
+ * 
+ * body: 
+ * {
+ *  "locations": ["Washington D.C."]
+ * }
+ * 
+ * Response: 
+ * {
+ *  "data": {
+ *       "Washington D.C.": {
+ *           "address": {
+ *               "city": "Washington",
+ *               "state": "District of Columbia",
+ *               "country": "United States of America",
+ *               "country_code": "us"
+ *           },
+ *           "display_name": "Washington, District of Columbia, United States of America",
+ *           "lat": "38.8949549",
+ *           "lon": "-77.0366456"
+ *       }
+ *   }
+ * }
+ */
+app.get('/api/locations', async (req, res) => {
+    const locations = req.body.locations;
+
+    if(!locations || !Array.isArray(locations)) {
+        res.status(400);
+        res.json({
+            title: 'Invalid Request',
+            detail: 'Please specify valid locations in the request body.',
+        });
+        return;
+    }
 
     res.json({
-        data: tweets.map(tweet => {
-            const author = users.find(user => user.id === tweet.author_id);
-            return {
-                author: {
-                    ...author,
-                    location_details: locationDetails[author.location],
-                },
-                tweet,
-            }
-        }),
+        data: await getLocationDetails(locations),
     });
 });
 

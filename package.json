@@ -2,9 +2,9 @@
   "name": "display-tweets-backend",
   "version": "1.0.0",
   "description": "",
-  "main": "src/views/index.js",
+  "main": "src/index.js",
   "scripts": {
-    "start": "nodemon src/views/index.js"
+    "start": "nodemon src/index.js"
   },
   "author": "Roy Xiong",
   "license": "ISC",
