@@ -8,7 +8,7 @@ const TWITTER_ENDPOINT = 'https://api.twitter.com/2/tweets/search/recent';
 const getTweets = async (hashtag) => {
     const queryParams = {
         // hashtag to search for
-        query: `#${hashtag}`,
+        query: `#${hashtag} -is:retweet`,
         // number of tweets to fetch
         max_results: 20,
         // tweet fields we want to receive
