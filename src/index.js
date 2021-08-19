@@ -7,16 +7,16 @@ app.use(express.json());
 
 /**
  * Fetch tweets containing a given hashtag.
- * 
- * Returns an HTTP 400 if the hashtag is not specified, 
+ *
+ * Returns an HTTP 400 if the hashtag is not specified,
  * or if the Twitter API returns an error.
- * 
+ *
  * Example:
- * 
+ *
  * GET /api/twitter?hashtag="trending"
- * 
- * Response: 
- * 
+ *
+ * Response:
+ *
  * {
  *  data: [
  *      {
@@ -37,67 +37,66 @@ app.use(express.json());
  *      ...
  *  ]
  * }
- * 
+ *
  */
 app.get('/api/tweets', async (req, res) => {
-    
-    const { hashtag } = req.query;
+  const { hashtag } = req.query;
 
-    if (!hashtag) {
-        res.status(400);
-        res.json({
-            title: 'Invalid Request',
-            detail: 'Please specify a hashtag',
-        });
-        return;
-    }
-
-    const jsonData = await getTweets(hashtag);
-
-    // Error returned from Twitter API
-    if (jsonData.title && jsonData.detail) {
-        if (jsonData.status) {
-            res.status(jsonData.status);
-        } else {
-            res.status(400);
-        }
-        res.json({
-            title: jsonData.title,
-            detail: jsonData.detail,
-        });
-        return;
-    }
-
-    // No results
-    if (jsonData.meta.result_count === 0) {
-        res.json({ data: [] });
-        return;
-    }
-
-    const tweets = jsonData.data;
-    const { users } = jsonData.includes;
-
+  if (!hashtag) {
+    res.status(400);
     res.json({
-        data: tweets.map(tweet => ({
-            author: users.find(user => user.id === tweet.author_id),
-            tweet,
-        })),
+      title: 'Invalid Request',
+      detail: 'Please specify a hashtag',
     });
+    return;
+  }
+
+  const jsonData = await getTweets(hashtag);
+
+  // Error returned from Twitter API
+  if (jsonData.title && jsonData.detail) {
+    if (jsonData.status) {
+      res.status(jsonData.status);
+    } else {
+      res.status(400);
+    }
+    res.json({
+      title: jsonData.title,
+      detail: jsonData.detail,
+    });
+    return;
+  }
+
+  // No results
+  if (jsonData.meta.result_count === 0) {
+    res.json({ data: [] });
+    return;
+  }
+
+  const tweets = jsonData.data;
+  const { users } = jsonData.includes;
+
+  res.json({
+    data: tweets.map((tweet) => ({
+      author: users.find((user) => user.id === tweet.author_id),
+      tweet,
+    })),
+  });
 });
 
 /**
  * Fetch details about an array of locations.
- * 
+ *
  * Example:
- * 
+ *
  * GET /api/locations
- * 
- * body: 
+ *
+ * body:
  * {
  *  "locations": ["Washington D.C."]
  * }
- * 
- * Response: 
+ *
+ * Response:
  * {
  *  "data": {
  *       "Washington D.C.": {
@@ -115,21 +114,21 @@ app.get('/api/tweets', async (req, res) => {
  * }
  */
 app.get('/api/locations', async (req, res) => {
-    const locations = req.body.locations;
+  const { locations } = req.body;
 
-    if(!locations || !Array.isArray(locations)) {
-        res.status(400);
-        res.json({
-            title: 'Invalid Request',
-            detail: 'Please specify valid locations in the request body.',
-        });
-        return;
-    }
-
+  if (!locations || !Array.isArray(locations)) {
+    res.status(400);
     res.json({
-        data: await getLocationDetails(locations),
+      title: 'Invalid Request',
+      detail: 'Please specify valid locations in the request body.',
     });
+    return;
+  }
+
+  res.json({
+    data: await getLocationDetails(locations),
+  });
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`App listening on port ${PORT}`));
+app.listen(PORT, () => undefined);
