@@ -25,7 +25,7 @@ const getTweets = async (hashtag, nextToken) => {
   }
   const params = `?${querystring.stringify(queryParams)}`;
   const urlWithParams = `${TWITTER_ENDPOINT}${params}`;
-  const response = await fetch(urlWithParams, { headers: { Authorization: `Bearer ${process.env.TWITTER_API_KEY}` } });
+  const response = await fetch(urlWithParams, { headers: { Authorization: `Bearer ${process.env.TWITTER_BEARER_TOKEN}` } });
   return response.json();
 };
 
