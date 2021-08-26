@@ -1,9 +1,14 @@
 const express = require('express');
+const cors = require('cors');
 const { getLocationDetails } = require('./api/geocoding');
 const { getTweets } = require('./api/twitter');
 
 const app = express();
 app.use(express.json());
+
+app.use(cors({
+  origin: ['http://localhost'],
+}));
 
 /**
  * Fetch tweets containing a given hashtag.
