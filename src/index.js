@@ -6,9 +6,17 @@ const { getTweets } = require('./api/twitter');
 const app = express();
 app.use(express.json());
 
-app.use(cors({
-  origin: ['http://localhost'],
-}));
+const whitelist = ['http://localhost'];
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+};
+app.use(cors(corsOptions));
 
 /**
  * Fetch tweets containing a given hashtag.
