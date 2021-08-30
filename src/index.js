@@ -6,10 +6,7 @@ const { getTweets } = require('./api/twitter');
 const app = express();
 app.use(express.json());
 
-app.use(cors({
-  credentials: true,
-  origin: 'http://localhost:3000',
-}));
+app.use(cors());
 
 /**
  * Fetch tweets containing a given hashtag.
