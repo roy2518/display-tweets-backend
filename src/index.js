@@ -52,7 +52,7 @@ app.use(cors({
  *
  */
 app.get('/api/tweets', async (req, res) => {
-  const { hashtag, nextToken } = req.query;
+  const { hashtag, next_token: nextToken } = req.query;
 
   if (!hashtag) {
     res.status(400);
