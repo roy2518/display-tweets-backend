@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const he = require('he');
 const { getLocationDetails } = require('./api/geocoding');
 const { getTweets } = require('./api/twitter');
 
@@ -94,7 +95,9 @@ app.get('/api/tweets', async (req, res) => {
     {
       tweets: tweets.map((tweet) => ({
         author: users.find((user) => user.id === tweet.author_id),
-        tweet,
+        tweet: {
+          ...tweet, text: he.decode(tweet.text),
+        },
       })),
     },
     next_token: jsonData.meta.next_token,
