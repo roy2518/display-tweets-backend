@@ -14,7 +14,7 @@ const getTweets = async (hashtag, nextToken) => {
     // number of tweets to fetch
     max_results: 20,
     // tweet fields we want to receive
-    'tweet.fields': 'created_at,text',
+    'tweet.fields': 'created_at,text,entities',
     // get user info
     expansions: 'author_id',
     // user fields we want to retrieve
