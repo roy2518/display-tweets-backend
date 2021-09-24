@@ -59,7 +59,7 @@ app.get('/api/tweets', async (req, res) => {
     res.status(400);
     res.json({
       title: 'Invalid Request',
-      detail: 'Please specify a hashtag',
+      detail: 'Please specify a valid hashtag',
     });
     return;
   }
