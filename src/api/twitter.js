@@ -12,7 +12,7 @@ const getTweets = async (hashtag, nextToken) => {
     // hashtag to search for
     query: `#${hashtag} -is:retweet lang:en`,
     // number of tweets to fetch
-    max_results: 20,
+    max_results: 40,
     // tweet fields we want to receive
     'tweet.fields': 'created_at,text,entities',
     // get user info

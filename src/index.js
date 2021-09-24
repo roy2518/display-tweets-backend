@@ -65,7 +65,6 @@ app.get('/api/tweets', async (req, res) => {
   }
 
   const jsonData = await getTweets(hashtag, nextToken);
-  console.log(JSON.stringify(jsonData));
 
   // Error returned from Twitter API
   if (jsonData.title && jsonData.detail) {
