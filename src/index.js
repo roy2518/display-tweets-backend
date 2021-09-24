@@ -9,7 +9,7 @@ app.use(express.json());
 
 app.use(cors({
   credentials: true,
-  origin: 'http://localhost:3000',
+  origin: 'https://roy2518.github.io/display-tweets-frontend/',
 }));
 
 /**
