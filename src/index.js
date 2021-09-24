@@ -9,7 +9,7 @@ app.use(express.json());
 
 app.use(cors({
   credentials: true,
-  origin: 'https://roy2518.github.io',
+  origin: ['https://roy2518.github.io', 'http://localhost:3000'],
 }));
 
 /**
